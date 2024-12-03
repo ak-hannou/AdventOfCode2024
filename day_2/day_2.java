@@ -43,23 +43,7 @@ class day_2 {
         System.out.println("Part 1: " + safe_count_1);
         System.out.println("Part 2: " + safe_count_2);
     }
-    /*
-     * 
-     * for i in range(len(row)-1):
-        if row[i] == row[i+1]:
-            return False
-        if i == 0:
-            if row[i] < row[i+1]:
-                increasing = True
-        if (row[i] < row[i+1] and increasing) or (row[i] > row[i+1] and not increasing):   
-            if not abs(row[i] - row[i+1]) <= safe_distance:
-                return False
-        else:
-            return False
-    return True
-  
-     * 
-     */
+    
     private static boolean checkSafe(List<Integer> row) {
         boolean increasing = false;
         for (int i = 0; i < row.size() - 1; i++) {
