@@ -6,43 +6,79 @@ import java.util.*;
 class day_2 {
     public static void main(String[] args) {
         String filePath = "input.txt";
-        List<Integer> column1 = new ArrayList<>();
-        List<Integer> column2 = new ArrayList<>();
-
+        List<List<Integer>> data = new ArrayList<>();
         try {
             List<String> lines = Files.readAllLines(Paths.get(filePath));
             for (String line : lines) {
                 String[] parts = line.split("\\s+");
-                column1.add(Integer.parseInt(parts[0]));
-                column2.add(Integer.parseInt(parts[1]));
+                List<Integer> row = new ArrayList<>();
+                for (String part : parts) {
+                    row.add(Integer.parseInt(part));
+                }
+                data.add(row);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Collections.sort(column1);
-        Collections.sort(column2);
-        int totalDistance = 0;
-        for (int i = 0; i < column1.size(); i++) {
-            totalDistance += Math.abs(column1.get(i) - column2.get(i));
-        }
-        System.out.println();
-
-        System.out.println(totalDistance);
-
-        HashMap<Integer, Integer> counts = new HashMap<>();
-        for (int i = 0; i < column1.size(); i++) {
-            for (int j=0; j < column2.size(); j++) {
-                if (column1.get(i).equals(column2.get(j))) {
-                    counts.put(column1.get(i), counts.getOrDefault(column1.get(i), 0) + 1);
+        int safe_count_1 = 0;
+        int safe_count_2 = 0;
+        for (List<Integer> row : data) {
+            if (checkSafe(row)) {
+                safe_count_1++;
+                safe_count_2++;
+            }
+            else {
+                for(int i = 0; i < row.size(); i++){
+                    List<Integer> row_copy_head = new ArrayList<>(row.subList(0, i));
+                    List<Integer> row_copy_tail = new ArrayList<>(row.subList(i+1, row.size()));
+                    row_copy_head.addAll(row_copy_tail);
+                    if(checkSafe(row_copy_head)){
+                        safe_count_2++;
+                        break;
+                    }
                 }
             }
         }
-
-        int totalSimilarity = 0;
-        for (int key : counts.keySet()) {
-            totalSimilarity += counts.get(key)*key;
+        System.out.println("Part 1: " + safe_count_1);
+        System.out.println("Part 2: " + safe_count_2);
+    }
+    /*
+     * 
+     * for i in range(len(row)-1):
+        if row[i] == row[i+1]:
+            return False
+        if i == 0:
+            if row[i] < row[i+1]:
+                increasing = True
+        if (row[i] < row[i+1] and increasing) or (row[i] > row[i+1] and not increasing):   
+            if not abs(row[i] - row[i+1]) <= safe_distance:
+                return False
+        else:
+            return False
+    return True
+  
+     * 
+     */
+    private static boolean checkSafe(List<Integer> row) {
+        boolean increasing = false;
+        for (int i = 0; i < row.size() - 1; i++) {
+            if (row.get(i) == row.get(i + 1)) {
+                return false;
+            }
+            if (i == 0) {
+                if (row.get(i) < row.get(i + 1)) {
+                    increasing = true;
+                }
+            }
+            if ((row.get(i) < row.get(i + 1) && increasing) || (row.get(i) > row.get(i + 1) && !increasing)) {
+                if (!(Math.abs(row.get(i) - row.get(i + 1)) <= 3)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
-        System.out.println(totalSimilarity);
-    }   
+        return true;
+    }
 }
